@@ -1,0 +1,38 @@
+}
+    }
+
+    private static void sellStock() {
+        System.out.print("Enter stock symbol to sell: ");
+        String sellSymbol = scanner.next();
+        int sellQuantity = getQuantity();
+        Stock sellStock = market.getStock(sellSymbol);
+        if (sellStock != null) {
+            portfolio.sellStock(sellSymbol, sellQuantity, sellStock.getPrice());
+        } else {
+            System.out.println("Stock symbol not found.");
+        }
+    }
+
+    private static int getQuantity() {
+        while (true) {
+            System.out.print("Enter quantity: ");
+            try {
+                return scanner.nextInt();
+            } catch (InputMismatchException e) {
+                System.out.print("Invalid input. Please enter an integer: ");
+                scanner.next(); // Clear invalid input
+            }
+        }
+    }
+
+    private static void updateMarketPrices() {
+        market.updatePrices();
+        System.out.println("Market prices updated.");
+    }
+
+    private static void exitProgram() {
+        scanner.close();
+        System.out.println("Exiting...");
+        System.exit(0);
+    }
+}
