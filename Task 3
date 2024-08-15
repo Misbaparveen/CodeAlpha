@@ -1,0 +1,130 @@
+}
+
+        public void setTelephoneNumber(String telephoneNumber) {
+            this.telephoneNumber = telephoneNumber;
+        }
+    }
+
+    class MakeReservationFrame extends JFrame {
+        private Hotel hotel;
+
+        public MakeReservationFrame(Hotel hotel) {
+            this.hotel = hotel;
+            setTitle("Make Reservation");
+            setSize(400, 200);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setLocationRelativeTo(null);
+
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            JComboBox<String> categoryComboBox = new JComboBox<>();
+            for (String category : hotel.getRoomCategories()) {
+                categoryComboBox.addItem(category);
+            }
+            mainPanel.add(categoryComboBox, BorderLayout.NORTH);
+
+            JPanel inputPanel = new JPanel(new GridLayout(2, 2, 5, 5)); // Adjusted spacing
+            JLabel nameLabel = new JLabel("Enter Name:");
+            JTextField nameTextField = new JTextField(20);
+            JLabel telephoneLabel = new JLabel("Enter contact Number:");
+            JTextField telephoneTextField = new JTextField(20);
+            inputPanel.add(nameLabel);
+            inputPanel.add(nameTextField);
+            inputPanel.add(telephoneLabel);
+            inputPanel.add(telephoneTextField);
+            mainPanel.add(inputPanel, BorderLayout.CENTER);
+
+            JButton reserveButton = new JButton("Reserve");
+            reserveButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String selectedCategory = (String) categoryComboBox.getSelectedItem();
+                    String guestName = nameTextField.getText();
+                    String telephoneNumber = telephoneTextField.getText();
+                    if (!guestName.isEmpty() && !telephoneNumber.isEmpty()) {
+                        boolean reservationStatus = hotel.makeReservation(selectedCategory, guestName, telephoneNumber);
+                        if (reservationStatus) {
+                            JOptionPane.showMessageDialog(null, "Reservation successful!");
+                        } else {
+                            JOptionPane.showMessageDialog(null, "Reservation failed. No rooms available.");
+                        }
+                    } else {
+                        JOptionPane.showMessageDialog(null, "Please enter guest name and contact number.");
+                    }
+                }
+            });
+            mainPanel.add(reserveButton, BorderLayout.SOUTH);
+
+            add(mainPanel);
+            setVisible(true);
+        }
+    }
+
+    class SearchRoomsFrame extends JFrame {
+        public SearchRoomsFrame(Hotel hotel) {
+            setTitle("Search for the Available Rooms");
+            setSize(400, 200);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setLocationRelativeTo(null);
+
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            JComboBox<String> categoryComboBox = new JComboBox<>();
+            for (String category : hotel.getRoomCategories()) {
+                categoryComboBox.addItem(category);
+            }
+            mainPanel.add(categoryComboBox, BorderLayout.NORTH);
+
+            JTextArea resultTextArea = new JTextArea(10, 30);
+            resultTextArea.setEditable(false);
+            JScrollPane scrollPane = new JScrollPane(resultTextArea);
+            mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+            JButton searchButton = new JButton("Search");
+            searchButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    String selectedCategory = (String) categoryComboBox.getSelectedItem();
+                    List<Room> availableRooms = hotel.getAvailableRooms(selectedCategory);
+                    StringBuilder sb = new StringBuilder();
+                    for (Room room : availableRooms) {
+                        sb.append("Room ").append(room.getNumber()).append("\n");
+                    }
+                    resultTextArea.setText(sb.toString());
+                }
+            });
+            mainPanel.add(searchButton, BorderLayout.SOUTH);
+
+            add(mainPanel);
+            setVisible(true);
+        }
+    }
+
+    class ViewBookingDetailsFrame extends JFrame {
+        public ViewBookingDetailsFrame(Hotel hotel) {
+            setTitle("View The Booking Details");
+            setSize(400, 200);
+            setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+            setLocationRelativeTo(null);
+
+            JPanel mainPanel = new JPanel(new BorderLayout());
+            mainPanel.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+
+            JTextArea detailsTextArea = new JTextArea(10, 30);
+            detailsTextArea.setEditable(false);
+            StringBuilder sb = new StringBuilder();
+            for (Room room : hotel.getAllRooms()) {
+                if (room.isBooked()) {
+                    sb.append("Room ").append(room.getNumber()).append(" - ").append(room.getGuestName()).append(" - ").append(room.getTelephoneNumber()).append("\n");
+                }
+            }
+            detailsTextArea.setText(sb.toString());
+            JScrollPane scrollPane = new JScrollPane(detailsTextArea);
+            mainPanel.add(scrollPane, BorderLayout.CENTER);
+
+            add(mainPanel);
+            setVisible(true);
+        }
+    }
